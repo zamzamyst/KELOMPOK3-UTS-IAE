@@ -38,13 +38,15 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://localhost:8001/api/buses",
+									"raw": "http://localhost:4000/api/bus-service/api/buses",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8001",
+									"port": "4000",
 									"path": [
+										"api",
+										"bus-service",
 										"api",
 										"buses"
 									]
@@ -93,7 +95,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"plate_number\": \"B1111XYZ\",\n  \"name\": \"Bus A\",\n  \"capacity\": 40,\n  \"type\": \"AC\"\n}",
+									"raw": "{\n    \"plate_number\": \"B 1238 CD\",\n    \"name\": \"Bus Cacuk\",\n    \"capacity\": 30,\n    \"type\": \"Mini Bus\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -238,13 +240,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8001/api/routes",
+									"raw": "http://localhost:4000/api/bus-service/api/routes",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8001",
+									"port": "4000",
 									"path": [
+										"api",
+										"bus-service",
 										"api",
 										"routes"
 									]
@@ -293,7 +297,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\":\"R1\",\n    \"origin\":\"A\",\n    \"destination\":\"B\",\n    \"stops\":[\"A\",\"X\",\"B\"]\n}",
+									"raw": "{\n    \"code\":\"RYYZ100\",\n    \"origin\":\"Ambon\",\n    \"destination\":\"Bandung\",\n    \"stops\":[\"Aeon\",\"Xander\",\"Bekasi\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -301,13 +305,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8001/api/routes",
+									"raw": "http://localhost:4000/api/bus-service/api/routes",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8001",
+									"port": "4000",
 									"path": [
+										"api",
+										"bus-service",
 										"api",
 										"routes"
 									]
@@ -436,13 +442,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8001/api/schedules",
+									"raw": "http://localhost:4000/api/bus-service/api/schedules",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8001",
+									"port": "4000",
 									"path": [
+										"api",
+										"bus-service",
 										"api",
 										"schedules"
 									]
@@ -499,13 +507,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8001/api/schedules",
+									"raw": "http://localhost:4000/api/bus-service/api/schedules",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8001",
+									"port": "4000",
 									"path": [
+										"api",
+										"bus-service",
 										"api",
 										"schedules"
 									]
@@ -682,7 +692,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"schedule_id\":1,\n    \"passenger_name\":\"FAT\",\n    \"seat_count\":2,\n    \"passenger_contact\":\"0988888\"\n}",
+							"raw": "{\n    \"schedule_id\":1,\n    \"passenger_name\":\"FATHUR\",\n    \"seat_count\":9,\n    \"passenger_contact\":\"081219287166\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -829,7 +839,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4000/api/ticket-service/api/tickets/1",
+							"raw": "http://localhost:4000/api/payment-service/api/payments",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -837,10 +847,9 @@
 							"port": "4000",
 							"path": [
 								"api",
-								"ticket-service",
+								"payment-service",
 								"api",
-								"tickets",
-								"1"
+								"payments"
 							]
 						},
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -1067,7 +1076,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bus_id\": 6,\n  \"lat\": -6.914744,\n  \"lng\": 107.609810\n}\n",
+							"raw": "{\n  \"bus_id\": 2\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
