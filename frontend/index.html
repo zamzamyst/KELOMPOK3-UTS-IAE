@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Bus Tracker</title></head>
+<body>
+  <h1>Bus Tracker — Demo</h1>
+  <div id="output"></div>
+
+  <script>
+    async function api(path, opts){
+      const res = await fetch('/api'+path); // assumes gateway is served at root
+      return res.json();
+    }
+
+    async function listSchedules(){
+      const data = await fetch('http://localhost:3000/api/bus-service/api/schedules').then(r=>r.json());
+      document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+    }
+
+    listSchedules();
+  </script>
+</body>
+</html>
