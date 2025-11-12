@@ -15,8 +15,18 @@ class InternalController extends Controller {
         $s = Schedule::find($id);
         if (!$s) return response()->json(['error'=>'Not found'],404);
         if ($s->available_seats < $req->seats) return response()->json(['error'=>'Insufficient seats'],400);
+        
         $s->available_seats -= $req->seats;
         $s->save();
-        return response()->json(['message'=>'Reserved','available_seats'=>$s->available_seats]);
+
+        $bus = $s->bus;
+        $bus->capacity -= $req->seats;
+        $bus->save();
+
+        return response()->json([
+            'message'=>'Reserved',
+            'available_seats'=>$s->available_seats,
+            'bus' => $bus
+        ]);
     }
 }
