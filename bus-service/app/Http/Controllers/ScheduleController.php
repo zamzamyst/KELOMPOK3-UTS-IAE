@@ -4,8 +4,13 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller {
-    public function index(){ return Schedule::with(['bus','route'])->get(); }
-    public function store(Request $r){
+    public function index()
+    { 
+        return Schedule::with(['bus','route'])->get(); 
+    }
+
+    public function store(Request $r)
+    {
         $v = $r->validate([
             'bus_id'=>'required|exists:buses,id',
             'route_id'=>'required|exists:routes,id',
@@ -16,7 +21,19 @@ class ScheduleController extends Controller {
         ]);
         return response()->json(Schedule::create($v), 201);
     }
-    public function show(Schedule $schedule){ return $schedule->load(['bus','route']); }
-    public function update(Request $r, Schedule $schedule){ $schedule->update($r->all()); return $schedule; }
-    public function destroy(Schedule $schedule){ $schedule->delete(); return response()->json(['message'=>'Deleted']); }
+
+    public function show(Schedule $schedule)
+    { 
+        return $schedule->load(['bus','route']); 
+    }
+
+    public function update(Request $r, Schedule $schedule)
+    { 
+        $schedule->update($r->all()); return $schedule;
+    }
+
+    public function destroy(Schedule $schedule)
+    { 
+        $schedule->delete(); return response()->json(['message'=>'Deleted']); 
+    }
 }
