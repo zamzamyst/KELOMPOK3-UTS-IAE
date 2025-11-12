@@ -9,4 +9,5 @@ class BusRoute extends Model {
     protected $fillable = ['code','origin','destination','stops'];
     protected $casts = ['stops' => 'array'];
     public function schedules(){ return $this->hasMany(Schedule::class, 'route_id'); }
+    public function buses(){ return $this->hasMany(Bus::class, 'route_id'); }
 }

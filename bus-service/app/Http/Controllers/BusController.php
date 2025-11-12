@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 class BusController extends Controller {
     public function index(){ return Bus::all(); }
     public function store(Request $r){
-        $v = $r->validate(['plate_number'=>'required|unique:buses','name'=>'required','capacity'=>'required|integer','type'=>'nullable']);
+        $v = $r->validate(['plate_number'=>'required|unique:buses','name'=>'required','capacity'=>'required|integer','type'=>'nullable','route_id'=>'nullable|exists:routes,id']);
         return response()->json(Bus::create($v), 201);
     }
     public function show(Bus $bus){ return $bus; }
