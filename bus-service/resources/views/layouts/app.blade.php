@@ -15,11 +15,18 @@
     </button>
     <div class="collapse navbar-collapse" id="navMain">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        @php $gateway = rtrim(env('API_GATEWAY_URL','http://127.0.0.1:4000'), '/'); @endphp
-        <li class="nav-item"><a class="nav-link" href="{{ $gateway.'/bus-service/buses' }}">Bus Service</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ $gateway.'/ticket-service/tickets' }}">Ticket Service</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ $gateway.'/payment-service/payments' }}">Payment Service</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ $gateway.'/tracking-service/trackings' }}">Tracking Service</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('buses.index') }}">Buses</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('routes.index') }}">Routes</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('schedules.index') }}">Schedules</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Services</a>
+          <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+            @php $gateway = rtrim(env('API_GATEWAY_URL','http://127.0.0.1:4000'), '/'); @endphp
+            <li><a class="dropdown-item" href="{{ $gateway.'/ticket-service/tickets' }}">Ticket Service</a></li>
+            <li><a class="dropdown-item" href="{{ $gateway.'/payment-service/payments' }}">Payment Service</a></li>
+            <li><a class="dropdown-item" href="{{ $gateway.'/tracking-service/trackings' }}">Tracking Service</a></li>
+          </ul>
+        </li>
       </ul>
       <form class="d-flex" role="search" action="{{ url('/') }}" method="GET">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
