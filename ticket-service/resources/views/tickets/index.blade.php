@@ -7,7 +7,7 @@
 </div>
 <table class="table table-striped">
   <thead>
-    <tr><th>ID</th><th>Ticket#</th><th>Schedule</th><th>Passenger</th><th>Seats</th><th>Total</th><th>Actions</th></tr>
+    <tr><th>ID</th><th>Ticket#</th><th>Schedule</th><th>Passenger</th><th>Contact</th><th>Seats</th><th>Total</th><th>Actions</th></tr>
   </thead>
   <tbody>
     @foreach($tickets as $t)
@@ -16,6 +16,7 @@
       <td>{{ $t->ticket_number }}</td>
       <td>{{ $t->schedule_id }}</td>
       <td>{{ $t->passenger_name }}</td>
+      <td>{{ $t->passenger_contact }}</td>
       <td>{{ $t->seat_count }}</td>
       <td>{{ $t->total_price }}</td>
       <td>

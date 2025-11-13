@@ -12,8 +12,8 @@
     <input type="text" name="passenger_name" value="{{ old('passenger_name',$ticket->passenger_name) }}" class="form-control" required>
   </div>
   <div class="mb-3">
-    <label class="form-label">Seat Count</label>
-    <input type="number" name="seat_count" value="{{ old('seat_count',$ticket->seat_count) }}" min="1" class="form-control" required>
+    <label class="form-label">Passenger Contact</label>
+    <input type="text" name="passenger_contact" value="{{ old('passenger_contact',$ticket->passenger_contact) }}" class="form-control" required>
   </div>
   <button class="btn btn-primary">Save</button>
 </form>
