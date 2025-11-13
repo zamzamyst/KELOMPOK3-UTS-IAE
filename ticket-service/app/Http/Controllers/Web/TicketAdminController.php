@@ -63,7 +63,11 @@ class TicketAdminController extends Controller
 
     public function edit(Ticket $ticket)
     {
-        return view('tickets.edit', compact('ticket'));
+        $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
+        $scheduleResp = \Illuminate\Support\Facades\Http::get("{$busBase}/api/internal/schedules/{$ticket->schedule_id}");
+        $price = $scheduleResp->ok() ? ($scheduleResp->json()['price'] ?? 0) : 0;
+        $available = $scheduleResp->ok() ? ($scheduleResp->json()['available_seats'] ?? null) : null;
+        return view('tickets.edit', compact('ticket','price','available'));
     }
 
     public function update(Request $r, Ticket $ticket)
@@ -71,8 +75,27 @@ class TicketAdminController extends Controller
         $data = $r->validate([
             'passenger_name' => 'required|string',
             'passenger_contact' => 'nullable|string',
+            'seat_count' => 'required|integer|min:1',
         ]);
-        $ticket->update($data);
+
+        // Fetch schedule price to recalculate total
+        $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
+        $scheduleResp = \Illuminate\Support\Facades\Http::get("{$busBase}/api/internal/schedules/{$ticket->schedule_id}");
+
+        if ($scheduleResp->ok()) {
+            $price = $scheduleResp->json()['price'] ?? 0;
+        } else {
+            // Fallback to previous per-seat price
+            $prevSeats = max(1, (int)$ticket->seat_count);
+            $price = $prevSeats > 0 ? ((float)$ticket->total_price / $prevSeats) : 0;
+        }
+
+        $ticket->passenger_name = $data['passenger_name'];
+        $ticket->passenger_contact = $data['passenger_contact'] ?? null;
+        $ticket->seat_count = (int)$data['seat_count'];
+        $ticket->total_price = $price * (int)$data['seat_count'];
+        $ticket->save();
+
         return redirect()->route('tickets.index')->with('success','Ticket updated');
     }
 
