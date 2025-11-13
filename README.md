@@ -51,30 +51,40 @@ Semua service berkomunikasi melalui **API Gateway** yang berfungsi sebagai pintu
                     │                     │
             ┌───────▼───────┐             │
             │   BUS SERVICE │             │
-            │   (Port 8001) │             │
-            └───┬───────┬───┘             │
-                │       │                 │
-         ┌──────▼┐   ┌──▼───────────────┐ │
-         │       │   │                  │ │
-    ┌────▼───┐ ┌─▼───▼─────┐    ┌───────▼─▼──┐
-    │TRACKING│ │  TICKET   │    │  PAYMENT   │
-    │SERVICE │ │ SERVICE   │    │  SERVICE   │
-    │(8004)  │ │ (8003)    │    │  (8002)    │
-    └────┬───┘ └─┬─────────┘    └────┬───────┘
-         │       │                   │
-    ┌────▼──┐ ┌──▼─────┐    ┌────────▼┐
-    │track_ │ │ticket_ │    │payment_ │
-    │db     │ │db      │    │db       │
-    └───────┘ └────────┘    └─────────┘
+            │   (Port 8001) │────────────────────────┐   
+            └───┬───────┬───┘             │          │   
+                │       │                 │          │
+         ┌──────▼┐   ┌──▼─────────────┐   │          │
+         │       │   │                │   │          │
+    ┌────▼───┐ ┌─▼───▼─────┐    ┌─────▼───▼──┐       │
+    │TRACKING│ │  TICKET   │    │  PAYMENT   │       │
+    │SERVICE │ │ SERVICE   │    │  SERVICE   │       │
+    │(8004)  │ │ (8003)    │    │  (8002)    │       │         
+    └────┬───┘ └─┬─────────┘    └────┬───────┘       │
+         │       │                   │               │
+    ┌────▼──┐ ┌──▼─────┐         ┌───▼─────┐         │
+    │track_ │ │ticket_ │         │payment_ │         │
+    │db     │ │db      │         │db       │         │
+    └───────┘ └────────┘         └─────────┘         │
+                                                     │
+                                           ┌─────────▼──────┐
+                                           │     bus_db     │
+                                           └────────────────┘
 ```
 
-**Data Flow:** Frontend → API Gateway → Bus Service (Hub) ← Tracking | → Ticket → Payment
+**Data Flow:**
+- Frontend → API Gateway → Services
+- Bus Service ← Tracking Service (Real-time data)
+- Bus Service → Ticket Service → Payment Service
+- Bus Service ↔ BUS_DB (Read/Write)
 
-**Service Relationships:**
-- **Tracking Service** ← Receives tracking data from **Bus Service**
-- **Bus Service** → Central hub, connects to **Ticket & Payment Services**
-- **Ticket Service** → Manages bookings, receives data from **Bus Service**
-- **Payment Service** → Final step, processes payments for **Tickets**
+**Database Mapping (1 Service = 1 Database):**
+- Bus Service (8001) ↔ BUS_DB
+- Ticket Service (8003) ↔ TICKET_DB  
+- Payment Service (8002) ↔ PAYMENT_DB
+- Tracking Service (8004) ↔ TRACKING_DB
+
+**Struktur Hubungan:** `Tracking ← Bus → Ticket → Payment`
 
 ---
 
