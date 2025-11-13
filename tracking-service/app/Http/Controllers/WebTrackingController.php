@@ -48,4 +48,25 @@ class WebTrackingController extends Controller
             'error' => 'Failed to create tracking. ' . ($response->json('message') ?? 'Unknown error'),
         ]);
     }
+
+    public function show($id)
+    {
+        return view('trackings.show', ['id' => $id]);
+    }
+
+    public function destroy($id)
+    {
+        $apiGateway = rtrim(env('API_GATEWAY_URL', 'http://127.0.0.1:4000'), '/');
+        $endpoint = "{$apiGateway}/api/tracking-service/trackings/{$id}";
+
+        $response = Http::delete($endpoint);
+
+        if ($response->successful()) {
+            return redirect()->route('trackings.index')->with('success', 'Tracking deleted successfully!');
+        }
+
+        return back()->withErrors([
+            'error' => 'Failed to delete tracking. ' . ($response->json('message') ?? 'Unknown error'),
+        ]);
+    }
 }

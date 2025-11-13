@@ -41,6 +41,22 @@
     </form>
 
     <script>
+      // Dynamically determine the API endpoint based on current origin
+      // If accessed via gateway (4000), POST to gateway; if accessed directly (8002), POST to service
+      const currentOrigin = window.location.origin;
+      let formAction;
+      
+      if (currentOrigin.includes('4000')) {
+        // Accessed via gateway: POST to gateway API endpoint
+        formAction = '{{ $formAction }}';
+      } else if (currentOrigin.includes('8002')) {
+        // Accessed directly on payment service port: POST to local service API
+        formAction = 'http://127.0.0.1:8002/api/payments';
+      } else {
+        // Fallback
+        formAction = '{{ $formAction }}';
+      }
+      
       document.getElementById('paymentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -57,7 +73,9 @@
           formData.append('_token', csrfToken);
         }
         
-        fetch('{{ $formAction }}', {
+        console.log('Submitting to:', formAction);
+        
+        fetch(formAction, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
