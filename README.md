@@ -45,23 +45,36 @@ Semua service berkomunikasi melalui **API Gateway** yang berfungsi sebagai pintu
 │                      API GATEWAY                                │
 │                   (Port 4000)                                   │
 │              Node.js/Express                                    │
-└──┬────────────┬─────────────────┬────────────────┬──────────────┘
-   │            │                 │                │
-   │            │                 │                │
-┌──▼──┐    ┌────▼────┐     ┌──────▼────┐    ┌─────▼──────┐
-│ BUS │    │ TICKET  │     │ PAYMENT   │    │ TRACKING  │
-│     │    │         │     │           │    │           │
-│8001 │    │ 8003    │     │ 8002      │    │ 8004      │
-└──┬──┘    └────┬────┘     └──────┬────┘    └─────┬──────┘
-   │            │                 │                │
-   │            │                 │                │
-┌──▼──────┐ ┌───▼────────┐ ┌──────▼───────┐ ┌────▼────────┐
-│ bus_db  │ │ ticket_db  │ │ payment_db   │ │ tracking_db │
-│(SQLite) │ │ (SQLite)   │ │ (SQLite)     │ │ (SQLite)    │
-└─────────┘ └────────────┘ └──────────────┘ └─────────────┘
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+            ┌───────▼───────┐             │
+            │   BUS SERVICE │             │
+            │   (Port 8001) │             │
+            └───┬───────┬───┘             │
+                │       │                 │
+         ┌──────▼┐   ┌──▼───────────────┐ │
+         │       │   │                  │ │
+    ┌────▼───┐ ┌─▼───▼─────┐    ┌───────▼─▼──┐
+    │TRACKING│ │  TICKET   │    │  PAYMENT   │
+    │SERVICE │ │ SERVICE   │    │  SERVICE   │
+    │(8004)  │ │ (8003)    │    │  (8002)    │
+    └────┬───┘ └─┬─────────┘    └────┬───────┘
+         │       │                   │
+    ┌────▼──┐ ┌──▼─────┐    ┌────────▼┐
+    │track_ │ │ticket_ │    │payment_ │
+    │db     │ │db      │    │db       │
+    └───────┘ └────────┘    └─────────┘
 ```
 
-**Data Flow:** Frontend → API Gateway → Services → Database
+**Data Flow:** Frontend → API Gateway → Bus Service (Hub) ← Tracking | → Ticket → Payment
+
+**Service Relationships:**
+- **Tracking Service** ← Receives tracking data from **Bus Service**
+- **Bus Service** → Central hub, connects to **Ticket & Payment Services**
+- **Ticket Service** → Manages bookings, receives data from **Bus Service**
+- **Payment Service** → Final step, processes payments for **Tickets**
 
 ---
 
@@ -83,6 +96,120 @@ Semua service berkomunikasi melalui **API Gateway** yang berfungsi sebagai pintu
 - **Composer**: [https://getcomposer.org/](https://getcomposer.org/)
 - **Node.js 16+**: [https://nodejs.org/](https://nodejs.org/)
 - **Postman** (optional): Untuk testing API
+
+---
+
+## ⚙️ Setup Cloning
+
+Jalankan langkah-langkah berikut SEKALI saja saat melakukan clone repository:
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/zamzamyst/KELOMPOK3-UTS-IAE.git
+cd KELOMPOK3-UTS-IAE
+```
+
+### 2. Setup API Gateway
+```bash
+cd api-gateway
+
+# Install dependencies
+npm install
+
+# Buat file .env jika belum ada
+copy .env.example .env  # Windows
+# atau
+cp .env.example .env    # Linux/Mac
+
+cd ..
+```
+
+### 3. Setup Bus Service
+```bash
+cd bus-service
+
+# Install PHP dependencies
+composer install
+
+# Install Node dependencies (untuk asset compilation)
+npm install
+
+# Buat file .env dari template
+copy .env.example .env  # Windows
+# atau
+cp .env.example .env    # Linux/Mac
+
+# Generate APP_KEY
+php artisan key:generate
+
+# Jalankan migration database
+php artisan migrate
+
+cd ..
+```
+
+### 4. Setup Ticket Service
+```bash
+cd ticket-service
+
+composer install
+npm install
+
+copy .env.example .env  # Windows
+# atau
+cp .env.example .env    # Linux/Mac
+
+php artisan key:generate
+php artisan migrate
+
+cd ..
+```
+
+### 5. Setup Payment Service
+```bash
+cd payment-service
+
+composer install
+npm install
+
+copy .env.example .env  # Windows
+# atau
+cp .env.example .env    # Linux/Mac
+
+php artisan key:generate
+php artisan migrate
+
+cd ..
+```
+
+### 6. Setup Tracking Service
+```bash
+cd tracking-service
+
+composer install
+npm install
+
+copy .env.example .env  # Windows
+# atau
+cp .env.example .env    # Linux/Mac
+
+php artisan key:generate
+php artisan migrate
+
+cd ..
+```
+
+### 7. Verifikasi Setup
+
+Pastikan semua service sudah ter-setup dengan memeriksa file berikut ada dan sudah dikonfigurasi:
+
+- ✅ `api-gateway/.env` - Konfigurasi API Gateway
+- ✅ `bus-service/.env` - Konfigurasi Bus Service
+- ✅ `ticket-service/.env` - Konfigurasi Ticket Service
+- ✅ `payment-service/.env` - Konfigurasi Payment Service
+- ✅ `tracking-service/.env` - Konfigurasi Tracking Service
+
+**Catatan:** Semua database file akan dibuat otomatis di folder `database/` masing-masing service saat melakukan `php artisan migrate`.
 
 ---
 
