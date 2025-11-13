@@ -56,6 +56,16 @@ class TrackingController extends Controller
             'bus_id' => 'required|integer',
         ]);
 
+        $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
+
+        // Cek apakah bus_id valid dengan memanggil bus-service
+        $busResp = Http::get("{$busBase}/api/buses/{$v['bus_id']}");
+        if (!$busResp->ok() || empty($busResp->json())) {
+            return response()->json([
+                'message' => 'Bus dengan ID tersebut tidak ditemukan. Sesuaikan ID Bus terlebih dahulu!',
+            ], 404);
+        }
+
         // generate random coordinates near a sensible default (Bandung area)
         $centerLat = -6.914744;
         $centerLng = 107.609810;
@@ -77,7 +87,6 @@ class TrackingController extends Controller
             $existing->save();
             $existing->refresh();
 
-            $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
             return response()->json($this->buildDetailedResponse($existing, $busBase), 200);
         }
 
@@ -89,8 +98,6 @@ class TrackingController extends Controller
         ]);
 
         $track->refresh();
-
-        $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
 
         return response()->json($this->buildDetailedResponse($track, $busBase), 201);
     }
