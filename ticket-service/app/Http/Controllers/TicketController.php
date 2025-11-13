@@ -45,6 +45,7 @@ class TicketController extends Controller {
         $data = $r->validate([
             'passenger_name' => 'sometimes|required|string',
             'passenger_contact' => 'sometimes|nullable|string',
+            'seat_count' => 'sometimes|required|integer|min:1'
         ]);
 
         $ticket->fill($data);
