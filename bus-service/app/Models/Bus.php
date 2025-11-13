@@ -9,8 +9,7 @@ class Bus extends Model {
         'plate_number',
         'name',
         'capacity',
-        'type',
-        'route_id'
+        'type'
     ];
 
     public function schedules()
@@ -18,8 +17,8 @@ class Bus extends Model {
         return $this->hasMany(Schedule::class); 
     }
     
-    public function route()
+    public function routes()
     {
-        return $this->belongsTo(BusRoute::class);
+        return $this->belongsToMany(BusRoute::class, 'bus_route', 'bus_id', 'route_id');
     }
 }

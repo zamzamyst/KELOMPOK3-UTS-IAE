@@ -58,4 +58,15 @@ class BusRouteController extends Controller {
     { 
         $route->delete(); return response()->json(['message'=>'Deleted']); 
     }
+
+    public function assignBus(Request $request, BusRoute $route)
+    {
+        $request->validate([
+            'bus_id' => 'required|exists:buses,id',
+        ]);
+
+        $route->buses()->attach($request->bus_id);
+
+        return $route->load('buses');
+    }
 }

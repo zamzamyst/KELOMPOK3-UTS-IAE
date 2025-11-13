@@ -9,4 +9,6 @@ Route::apiResource('buses', BusController::class);
 Route::apiResource('routes', BusRouteController::class);
 Route::apiResource('schedules', ScheduleController::class);
 
+Route::post('routes/{route}/assign-bus', [BusRouteController::class, 'assignBus']);
+
 Route::put('schedules/{schedule}/reserve', [InternalController::class,'reserveSeats']);

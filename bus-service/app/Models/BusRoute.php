@@ -21,7 +21,7 @@ class BusRoute extends Model {
     }
 
     public function buses()
-    { 
-        return $this->hasMany(Bus::class, 'route_id'); 
+    {
+        return $this->belongsToMany(Bus::class, 'bus_route', 'route_id', 'bus_id');
     }
 }
