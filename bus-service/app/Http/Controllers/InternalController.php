@@ -5,20 +5,12 @@ use Illuminate\Http\Request;
 
 class InternalController extends Controller {
     public function getSchedule($id){
-        $s = Schedule::with(['bus','route'])->find($id);
-
-        if (!$s) 
-            return response()->json(['error'=>'Not found'],404);
-        
-        return $s;
+        return Schedule::with(['bus','route'])->findOrFail($id);
     }
 
     public function reserveSeats($id, Request $req){
         $req->validate(['seats'=>'required|integer|min:1']);
-        $s = Schedule::find($id);
-        
-        if (!$s) 
-            return response()->json(['error'=>'Not found'],404);
+        $s = Schedule::findOrFail($id);
         if ($s->available_seats < $req->seats) 
             return response()->json(['error'=>'Insufficient seats'],400);
         

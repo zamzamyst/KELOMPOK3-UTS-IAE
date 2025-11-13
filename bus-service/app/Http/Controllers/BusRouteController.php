@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\BusRoute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BusRouteController extends Controller {
     public function index()
@@ -29,20 +30,25 @@ class BusRouteController extends Controller {
 
     public function update(Request $r, BusRoute $route)
     {
-        $v = $r->validate([
+        $validator = Validator::make($r->all(), [
             'code'=>'sometimes|required|unique:routes,code,'.$route->id,
             'origin'=>'sometimes|required',
             'destination'=>'sometimes|required',
             'stops'=>'nullable|array'
         ]);
 
-        // If client sends stops as JSON string, try to decode it safely
-        if (isset($v['stops']) && is_string($v['stops'])) {
-            $decoded = json_decode($v['stops'], true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $v['stops'] = $decoded;
+        $validator->before(function ($validator) {
+            $data = $validator->getData();
+            if (isset($data['stops']) && is_string($data['stops'])) {
+                $decoded = json_decode($data['stops'], true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $data['stops'] = $decoded;
+                    $validator->setData($data);
+                }
             }
-        }
+        });
+
+        $v = $validator->validate();
 
         $route->update($v);
         return $route;
