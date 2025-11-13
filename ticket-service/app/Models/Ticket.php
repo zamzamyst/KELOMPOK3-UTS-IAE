@@ -5,5 +5,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ticket extends Model {
     use HasFactory;
-    protected $fillable = ['ticket_number','schedule_id','passenger_name','passenger_contact','seat_count','total_price','status'];
+    protected $fillable = [
+        'ticket_number',
+        'schedule_id',
+        'passenger_name',
+        'passenger_contact',
+        'seat_count',
+        'total_price',
+        'status'
+    ];
 }

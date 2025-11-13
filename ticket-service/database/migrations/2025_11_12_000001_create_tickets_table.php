@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('passenger_contact')->nullable();
             $table->integer('seat_count')->default(1);
             $table->decimal('total_price',10,2)->default(0);
-            $table->string('status')->default('pending'); // pending, confirmed, paid, cancelled
+            $table->string('status')->default('unpaid');
             $table->timestamps();
         });
     }
