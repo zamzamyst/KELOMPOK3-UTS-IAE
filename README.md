@@ -51,7 +51,7 @@ Semua service berkomunikasi melalui **API Gateway** yang berfungsi sebagai pintu
                     │                     │
             ┌───────▼───────┐             │
             │   BUS SERVICE │             │
-            │   (Port 8001) │────────────────────────┐   
+            │   (Port 8001) │─────────────+──────────┐   
             └───┬───────┬───┘             │          │   
                 │       │                 │          │
          ┌──────▼┐   ┌──▼─────────────┐   │          │
