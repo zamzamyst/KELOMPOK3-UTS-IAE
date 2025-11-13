@@ -9,9 +9,6 @@ Route::apiResource('buses', BusController::class);
 Route::apiResource('routes', BusRouteController::class);
 Route::apiResource('schedules', ScheduleController::class);
 
-Route::prefix('internal')->group(function(){
-    Route::get('/buses/{id}', [BusController::class, 'show']);
-    Route::get('/routes/{id}', [BusRouteController::class, 'show']);
-    Route::get('schedules/{id}', [InternalController::class,'getSchedule']);
-    Route::put('schedules/{id}/reserve', [InternalController::class,'reserveSeats']);
-});
+Route::post('routes/{route}/assign-bus', [BusRouteController::class, 'assignBus']);
+
+Route::put('schedules/{schedule}/reserve', [InternalController::class,'reserveSeats']);

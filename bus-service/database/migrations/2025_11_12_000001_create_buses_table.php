@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->string('name');
             $table->integer('capacity')->default(30);
             $table->string('type')->nullable();
-            $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('set null');
+            $table->foreignId('route_id')->nullable()->constrained('routes')->onDelete('cascade');
             $table->timestamps();
         });
     }
