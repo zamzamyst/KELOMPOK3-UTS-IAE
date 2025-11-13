@@ -152,6 +152,9 @@ cp .env.example .env    # Linux/Mac
 # Generate APP_KEY
 php artisan key:generate
 
+# Buat database
+touch ./database/bus.sqlite
+
 # Jalankan migration database
 php artisan migrate
 
@@ -162,14 +165,24 @@ cd ..
 ```bash
 cd ticket-service
 
+# Install PHP dependencies
 composer install
+
+# Install Node dependencies (untuk asset compilation)
 npm install
 
+# Buat file .env dari template
 copy .env.example .env  # Windows
 # atau
 cp .env.example .env    # Linux/Mac
 
+# Generate APP_KEY
 php artisan key:generate
+
+# Buat database
+touch ./database/ticket.sqlite
+
+# Jalankan migration database
 php artisan migrate
 
 cd ..
@@ -179,14 +192,24 @@ cd ..
 ```bash
 cd payment-service
 
+# Install PHP dependencies
 composer install
+
+# Install Node dependencies (untuk asset compilation)
 npm install
 
+# Buat file .env dari template
 copy .env.example .env  # Windows
 # atau
 cp .env.example .env    # Linux/Mac
 
+# Generate APP_KEY
 php artisan key:generate
+
+# Buat database
+touch ./database/payment.sqlite
+
+# Jalankan migration database
 php artisan migrate
 
 cd ..
@@ -196,14 +219,24 @@ cd ..
 ```bash
 cd tracking-service
 
+# Install PHP dependencies
 composer install
+
+# Install Node dependencies (untuk asset compilation)
 npm install
 
+# Buat file .env dari template
 copy .env.example .env  # Windows
 # atau
 cp .env.example .env    # Linux/Mac
 
+# Generate APP_KEY
 php artisan key:generate
+
+# Buat database
+touch ./database/tracking.sqlite
+
+# Jalankan migration database
 php artisan migrate
 
 cd ..
@@ -232,7 +265,6 @@ Jalankan dalam urutan ini di **terminal terpisah**:
 #### 1️⃣ Terminal 1: API Gateway (WAJIB PERTAMA)
 ```bash
 cd api-gateway
-npm install
 npm start
 # Expected: API Gateway running on port 4000
 ```
@@ -240,47 +272,31 @@ npm start
 #### 2️⃣ Terminal 2: Bus Service
 ```bash
 cd bus-service
-composer install
-npm install
-php artisan key:generate
-php artisan migrate
 php artisan serve --port=8001
 ```
 
 #### 3️⃣ Terminal 3: Ticket Service
 ```bash
 cd ticket-service
-composer install
-npm install
-php artisan key:generate
-php artisan migrate
 php artisan serve --port=8003
 ```
 
 #### 4️⃣ Terminal 4: Payment Service
 ```bash
 cd payment-service
-composer install
-npm install
-php artisan key:generate
-php artisan migrate
 php artisan serve --port=8002
 ```
 
 #### 5️⃣ Terminal 5: Tracking Service
 ```bash
 cd tracking-service
-composer install
-npm install
-php artisan key:generate
-php artisan migrate
 php artisan serve --port=8004
 ```
 
 #### 6️⃣ Terminal 6: Frontend (TERAKHIR)
 ```bash
 cd frontend
-php -S 127.0.0.1:8000 -t .
+php -S 127.0.0.1:8000
 # Access: http://localhost:8000
 ```
 
@@ -305,7 +321,7 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8001
 DB_CONNECTION=sqlite
-DB_DATABASE=database/bus_service.db
+DB_DATABASE=database/bus.db
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
@@ -318,7 +334,7 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8003
 DB_CONNECTION=sqlite
-DB_DATABASE=database/ticket_service.db
+DB_DATABASE=database/ticket.db
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
@@ -331,7 +347,7 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8002
 DB_CONNECTION=sqlite
-DB_DATABASE=database/payment_service.db
+DB_DATABASE=database/payment.db
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
@@ -344,7 +360,7 @@ APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8004
 DB_CONNECTION=sqlite
-DB_DATABASE=database/tracking_service.db
+DB_DATABASE=database/tracking.db
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
@@ -372,18 +388,26 @@ Dokumentasi lengkap tersedia di: **[docs/api/](docs/api/README.md)**
 
 | Service | Method | Endpoint | Deskripsi |
 |---------|--------|----------|-----------|
-| **Bus** | GET | `/bus/api/buses` | Ambil semua bus |
-| **Bus** | POST | `/bus/api/buses` | Buat bus baru |
-| **Bus** | GET | `/bus/api/buses/{id}` | Detail bus |
-| **Bus** | PUT | `/bus/api/buses/{id}` | Update bus |
-| **Bus** | DELETE | `/bus/api/buses/{id}` | Hapus bus |
-| **Ticket** | GET | `/ticket/api/tickets` | Ambil semua tiket |
-| **Ticket** | POST | `/ticket/api/tickets` | Buat tiket baru |
-| **Ticket** | GET | `/ticket/api/tickets/{id}` | Detail tiket |
-| **Payment** | GET | `/payment/api/payments` | Ambil semua pembayaran |
-| **Payment** | POST | `/payment/api/payments` | Proses pembayaran |
-| **Tracking** | GET | `/tracking/api/tracking` | Ambil tracking |
-| **Tracking** | POST | `/tracking/api/tracking` | Buat tracking baru |
+| **Bus** | GET | `/api/bus-service/api/buses` | Ambil semua bus |
+| **Bus** | POST | `/api/bus-service/api/buses` | Buat bus baru |
+| **Bus** | GET | `/api/bus-service/api/buses/{id}` | Detail bus |
+| **Bus** | PUT | `/api/bus-service/api/buses/{id}` | Update bus |
+| **Bus** | DELETE | `/api/bus-service/api/buses/{id}` | Hapus bus |
+| **Ticket** | GET | `/api/ticket-service/api/tickets` | Ambil semua tiket |
+| **Ticket** | GET | `/api/ticket-service/api/tickets/{id}` | Detail tiket |
+| **Ticket** | POST | `/api/ticket-service/ticket/api/tickets` | Buat tiket baru |
+| **Ticket** | PUT | `/api/ticket-service/api/tickets/{id}` | Update tiket |
+| **Ticket** | DELETE | `/api/ticket-service/api/tickets/{id}` | Hapus tiket |
+| **Payment** | GET | `/api/payment-service/api/payments` | Ambil semua pembayaran |
+| **Payment** | GET | `/api/payment-service/api/payments/{id}` | Detail pembayaran |
+| **Payment** | POST | `/api/payment-service/api/payments` | Proses pembayaran |
+| **Payment** | PUT | `/api/payment-service/api/payments/{id}` | Update pembayaran |
+| **Payment** | DELETE | `/api/payment-service/api/payments/{id}` | Delete pembayaran |
+| **Tracking** | GET | `/api/tracking-service/api/tracking` | Ambil tracking |
+| **Tracking** | GET | `/api/tracking-service/api/tracking{id}` | Detail tracking |
+| **Tracking** | POST | `/api/tracking-service/api/tracking` | Buat tracking baru |
+| **Tracking** | POST | `/api/tracking-service/api/tracking` | Update tracking (jika bus_id sudah pernah di-track) |
+| **Tracking** | DELETE | `/api/tracking-service/api/tracking/{id}` | Hapus tracking baru |
 
 ### Direct Service Access (Bypass Gateway)
 
@@ -446,19 +470,6 @@ KELOMPOK3-UTS-IAE/
 ---
 
 ## 🧪 Testing & Troubleshooting
-
-### Health Check All Services
-
-```bash
-# API Gateway
-curl http://localhost:4000/health
-
-# Individual services
-curl http://localhost:8001/health
-curl http://localhost:8003/health
-curl http://localhost:8002/health
-curl http://localhost:8004/health
-```
 
 ### Import Postman Collection
 
