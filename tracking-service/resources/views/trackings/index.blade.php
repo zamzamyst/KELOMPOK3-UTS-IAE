@@ -18,8 +18,8 @@
             <th>ID</th>
             <th>Bus</th>
             <th>Schedule</th>
-            <th>Lat</th>
-            <th>Lng</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
             <th>Created</th>
         </tr>
     </thead>

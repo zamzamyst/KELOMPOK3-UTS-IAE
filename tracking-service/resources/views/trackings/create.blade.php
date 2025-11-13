@@ -35,33 +35,40 @@
         <input type="number" class="form-control" id="bus_id" name="bus_id" required>
       </div>
 
-      <div class="mb-3">
-        <label for="schedule_id" class="form-label">Schedule ID (optional)</label>
-        <input type="number" class="form-control" id="schedule_id" name="schedule_id">
-      </div>
-
       <button type="submit" class="btn btn-primary">Create / Update Tracking</button>
       <a href="{{ $gateway }}/tracking-service/trackings" class="btn btn-secondary">Cancel</a>
     </form>
 
     <script>
+      // Dynamically determine the API endpoint based on current origin
+      // If accessed via gateway (4000), POST to gateway; if accessed directly (8004), POST to service
+      const currentOrigin = window.location.origin;
+      let formAction;
+      
+      if (currentOrigin.includes('4000')) {
+        // Accessed via gateway: POST to gateway API endpoint
+        formAction = '{{ $formAction }}';
+      } else if (currentOrigin.includes('8004')) {
+        // Accessed directly on tracking service port: POST to local service API
+        formAction = 'http://127.0.0.1:8004/api/trackings';
+      } else {
+        // Fallback
+        formAction = '{{ $formAction }}';
+      }
+      
       document.getElementById('trackingForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const bus_id = document.getElementById('bus_id').value;
-        const schedule_id = document.getElementById('schedule_id').value;
         const csrfToken = document.querySelector('input[name="_token"]')?.value;
         
         const formData = new URLSearchParams();
         formData.append('bus_id', bus_id);
-        if (schedule_id) {
-          formData.append('schedule_id', schedule_id);
-        }
         if (csrfToken) {
           formData.append('_token', csrfToken);
         }
         
-        fetch('{{ $formAction }}', {
+        fetch(formAction, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',

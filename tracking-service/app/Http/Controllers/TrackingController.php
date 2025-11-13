@@ -74,7 +74,8 @@ class TrackingController extends Controller
         $track = Tracking::findOrFail($id);
         $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
 
-        return response()->json($this->buildDetailedResponse($track, $busBase));
+        $detailed = $this->buildDetailedResponse($track, $busBase);
+        return response()->json($detailed);
     }
 
     /**
@@ -154,10 +155,8 @@ class TrackingController extends Controller
 
         return [
             'id' => $track->id,
-            'location' => [
-                'lat' => $track->lat,
-                'lng' => $track->lng,
-            ],
+            'lat' => $track->lat,
+            'lng' => $track->lng,
             'bus' => [
                 'id' => $busData['id'] ?? null,
                 'name' => $busData['name'] ?? null,
@@ -178,6 +177,7 @@ class TrackingController extends Controller
                 'available_seats' => $scheduleData['available_seats'] ?? null,
                 'price' => $scheduleData['price'] ?? null,
             ] : null,
+            'created_at' => $track->created_at,
         ];
     }
 
