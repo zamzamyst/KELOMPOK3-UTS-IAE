@@ -12,17 +12,43 @@ class TrackingController extends Controller
     {
         $busBase = env('BUS_SERVICE_URL', 'http://127.0.0.1:8001');
 
-        return Tracking::all()->map(function ($track) use ($busBase) {
+        $tracks = Tracking::all();
+
+        // Cek apakah hasil kosong
+        if ($tracks->isEmpty()) {
+            return response()->json([
+                'message' => 'Data tracking tidak ditemukan.',
+                'data' => []
+            ], 404);
+        }
+
+        // Jika ada data, tampilkan seperti biasa
+        $data = $tracks->map(function ($track) use ($busBase) {
             return $this->buildDetailedResponse($track, $busBase);
         });
+
+        return response()->json([
+            'message' => 'Data tracking berhasil diambil.',
+            'data' => $data
+        ], 200);
     }
 
     public function destroy($id)
-    {
-        $track = Tracking::findOrFail($id);
-        $track->delete();
-        return response()->json(['message' => 'Deleted']);
-    }
+        {
+            $track = Tracking::find($id);
+
+            if (!$track) {
+                return response()->json([
+                    'message' => 'Data Tracking dengan ID tersebut tidak ditemukan!'
+                ], 404);
+            }
+
+            $track->delete();
+
+            return response()->json([
+                'message' => 'Data Tracking berhasil dihapus!'
+            ], 200);
+        }
 
     public function store(Request $r)
     {

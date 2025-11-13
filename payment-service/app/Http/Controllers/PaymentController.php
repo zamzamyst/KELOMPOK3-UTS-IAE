@@ -110,7 +110,7 @@ class PaymentController extends Controller {
             }
             // If changing from success to failed, revert ticket to confirmed
             elseif ($v['status'] === 'failed' && $payment->status === 'success') {
-                $revertResp = Http::put("{$ticketBase}/api/internal/tickets/{$payment->ticket_id}/status", ['status' => 'confirmed']);
+                $revertResp = Http::put("{$ticketBase}/api/internal/tickets/{$payment->ticket_id}/status", ['status' => 'unpaid']);
                 if (!$revertResp->ok()) {
                     return response()->json(['error'=>'Failed to revert ticket status'],500);
                 }
