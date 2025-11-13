@@ -1,59 +1,172 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ticket Service
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Layanan ini adalah microservice untuk mengelola tiket dalam sistem pemesanan bus. Ticket Service menyediakan API untuk CRUD tiket dan halaman web admin sederhana untuk membuat, mengedit, dan menghapus tiket. Service ini terintegrasi dengan Bus Service untuk mengambil jadwal dan melakukan reservasi kursi.
 
-## About Laravel
+- Bahasa/Framework: PHP (Laravel)
+- Endpoint publik: REST API di `/api/tickets` dan halaman web di `/tickets`
+- Integrasi: Bus Service (`BUS_SERVICE_URL`) untuk data `schedule` dan reservasi kursi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama
+- Membuat tiket baru berdasarkan `schedule_id` dengan pengecekan dan reservasi kursi ke Bus Service.
+- Melihat daftar tiket, detail, update sebagian data, dan menghapus tiket.
+- Web admin: form Create/Edit dengan kolom Total Harga yang terhitung otomatis saat jumlah kursi berubah.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prasyarat
+- PHP 8.1+ (sesuai versi Laravel project)
+- Composer
+- Database (MySQL/MariaDB atau yang didukung Laravel) sudah terkonfigurasi di `.env`
+- Bus Service berjalan dan dapat diakses (default: `http://127.0.0.1:8001`)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Konfigurasi Lingkungan
+Salin file `.env` dari contoh lalu set variabel yang dibutuhkan.
 
-## Learning Laravel
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Variabel penting:
+- `APP_URL` (opsional, contoh: `http://127.0.0.1:8003`)
+- `BUS_SERVICE_URL` default: `http://127.0.0.1:8001`
+- `DB_*` untuk koneksi database
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalasi
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+```
 
-## Laravel Sponsors
+## Menjalankan Service
+```bash
+php artisan serve --port=8003
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- API dasar: `http://127.0.0.1:8003/api`
+- Halaman web admin: `http://127.0.0.1:8003/tickets`
 
-### Premium Partners
+Pastikan Bus Service berjalan pada `BUS_SERVICE_URL` (mis. `http://127.0.0.1:8001`).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Model Data: Ticket
+Kolom penting di tabel `tickets`:
+- `id` (bigint, auto increment)
+- `ticket_number` (string, unik)
+- `schedule_id` (bigint)
+- `passenger_name` (string)
+- `passenger_contact` (string, nullable)
+- `seat_count` (int)
+- `total_price` (decimal 10,2)
+- `status` (string) — contoh nilai: `pending`, `confirmed`, `paid`, `cancelled`, `unpaid`
+- `created_at`, `updated_at`
 
-## Contributing
+Catatan status saat ini:
+- API `store` (endpoint publik) menyetel `status` ke `confirmed` ketika tiket dibuat.
+- Web admin `store` menyetel `status` ke `unpaid`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Alur Bisnis Singkat
+1. Client mengirimkan permintaan membuat tiket (memilih `schedule_id`, isi penumpang, jumlah kursi).
+2. Ticket Service memanggil Bus Service untuk mengambil detail jadwal dan memverifikasi ketersediaan kursi.
+3. Jika cukup, Ticket Service meminta Bus Service melakukan reservasi kursi.
+4. Tiket dibuat di database dengan `total_price = seat_count × price` dari jadwal.
 
-## Code of Conduct
+## REST API
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Base URL: `http://127.0.0.1:8003/api`
 
-## Security Vulnerabilities
+### Daftar Tiket
+- Method: `GET`
+- URL: `/tickets`
+- Contoh cURL:
+```bash
+curl http://127.0.0.1:8003/api/tickets
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Detail Tiket
+- Method: `GET`
+- URL: `/tickets/{id}`
+```bash
+curl http://127.0.0.1:8003/api/tickets/1
+```
 
-## License
+### Buat Tiket
+- Method: `POST`
+- URL: `/tickets`
+- Body JSON:
+```json
+{
+	"schedule_id": 1,
+	"passenger_name": "Budi",
+	"seat_count": 2,
+	"passenger_contact": "08123456789"
+}
+```
+- Respon: `201 Created` dengan objek tiket. Jika kursi tidak cukup: `400`, jika jadwal tidak ditemukan: `404`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Ubah Tiket (Update)
+- Method: `PUT` atau `PATCH`
+- URL: `/tickets/{id}`
+- Body JSON yang diizinkan via API:
+```json
+{
+	"passenger_name": "Budi Santoso",
+	"passenger_contact": "081298765432"
+}
+```
+- Catatan: API update hanya mengizinkan perubahan `passenger_name` dan `passenger_contact`. Perhitungan harga dan seat tidak diubah lewat endpoint ini.
+
+### Hapus Tiket
+- Method: `DELETE`
+- URL: `/tickets/{id}`
+```bash
+curl -X DELETE http://127.0.0.1:8003/api/tickets/1
+```
+
+### Endpoint Internal (untuk service ke service)
+- Ubah status tiket:
+	- Method: `PUT`
+	- URL: `/internal/tickets/{id}/status`
+	- Body JSON:
+	```json
+	{ "status": "paid" }
+	```
+
+## Halaman Web Admin
+- Daftar tiket: `GET /tickets`
+- Buat tiket: `GET /tickets/create`
+	- Dropdown schedule diisi dari Bus Service (`/api/schedules`).
+	- Total Harga dihitung otomatis di browser dari `price × seat_count`.
+- Edit tiket: `GET /tickets/{id}/edit`
+	- Dapat mengubah `passenger_name`, `passenger_contact`, dan `seat_count`.
+	- Total Harga akan dihitung ulang pada saat penyimpanan berdasarkan harga schedule saat ini (atau fallback ke harga per-kursi sebelumnya jika Bus Service tidak tersedia).
+
+## Pengujian dengan Postman
+Set base URL ke `http://127.0.0.1:8003/api`.
+- GET: `/tickets`
+- GET: `/tickets/{id}`
+- POST: `/tickets` dengan body seperti contoh di atas.
+- PUT/PATCH: `/tickets/{id}` hanya untuk `passenger_name` dan `passenger_contact`.
+- DELETE: `/tickets/{id}`
+
+Contoh Update (PUT):
+```
+http://127.0.0.1:8003/api/tickets/1
+Content-Type: application/json
+
+{
+	"passenger_name": "Nama Baru",
+	"passenger_contact": "081234567890"
+}
+```
+
+## Troubleshooting
+- `Bus Service unreachable` atau gagal reservasi: pastikan Bus Service berjalan pada `BUS_SERVICE_URL` (default `http://127.0.0.1:8001`).
+- `php artisan serve` port bentrok: ubah port mis. `--port=8004` dan sesuaikan `APP_URL` jika diperlukan.
+- Validasi gagal saat membuat tiket: cek kembali `schedule_id`, jumlah kursi, serta ketersediaan kursi di Bus Service.
+
+## Catatan Keamanan
+- Endpoint internal sebaiknya dibatasi hanya antar-service (misalnya lewat gateway atau network policy).
+- Validasi input sudah diterapkan pada controller; jangan mem-bypass dengan field yang tidak didukung.
+
+## Lisensi
+Bagian kode ini berada dalam repositori internal tugas/latihan. Gunakan sesuai kebutuhan proyek.
