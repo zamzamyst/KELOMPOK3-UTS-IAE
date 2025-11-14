@@ -476,12 +476,12 @@ DELETE /api/payments/{id}
 
 ## 📍 Tracking Service API
 
-**Base URL:** `http://localhost:4000/tracking` (via Gateway) atau `http://localhost:8004` (Direct)
+**Base URL:** `http://localhost:4000/api/tracking-service` (via Gateway) atau `http://localhost:8004` (Direct)
 
 ### 1. Get All Tracking
 
 ```http
-GET /api/tracking
+GET /api/trackings
 ```
 
 **Query Parameters:**
@@ -493,137 +493,188 @@ GET /api/tracking
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "bus_id": 1,
-      "route_name": "Jakarta - Bandung",
-      "departure_time": "2024-11-13T08:00:00Z",
-      "estimated_arrival": "2024-11-13T10:30:00Z",
-      "current_location": "-6.9271,107.6428",
-      "status": "on_route",
-      "distance_traveled": 45.5,
-      "total_distance": 180,
-      "created_at": "2024-11-13T08:00:00Z",
-      "updated_at": "2024-11-13T09:15:00Z"
-    }
-  ],
-  "pagination": {
-    "total": 1,
-    "limit": 10,
-    "offset": 0
-  }
+    "message": "Data tracking berhasil diambil.",
+    "data": [
+        {
+            "id": 2,
+            "lat": -6.9314204107843,
+            "lng": 107.6386642983,
+            "bus": {
+                "id": 2,
+                "name": "Bus Prima Jasa",
+                "plate_number": "B 2222 CD",
+                "capacity": 30
+            },
+            "route": {
+                "id": 1,
+                "code": "PPP111",
+                "origin": "Depok",
+                "destination": "Bandung",
+                "stops": [
+                    "Banten",
+                    "Cirebon",
+                    "Bekasi"
+                ]
+            },
+            "schedule": {
+                "id": 1,
+                "departure_at": "2025-12-01 08:00:00",
+                "arrival_at": "2025-12-01 10:00:00",
+                "available_seats": 36,
+                "price": 30000
+            },
+            "created_at": "2025-11-14T16:14:31.000000Z"
+        }
+    ]
 }
 ```
 
 ### 2. Get Tracking by ID
 
 ```http
-GET /api/tracking/{id}
+GET /api/trackings/{id}
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "data": {
-    "id": 1,
-    "bus_id": 1,
-    "route_name": "Jakarta - Bandung",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T10:30:00Z",
-    "current_location": "-6.9271,107.6428",
-    "status": "on_route",
-    "distance_traveled": 45.5,
-    "total_distance": 180,
-    "created_at": "2024-11-13T08:00:00Z",
-    "updated_at": "2024-11-13T09:15:00Z"
-  }
+    "message": "Data tracking berhasil diambil.",
+    "data": [
+        {
+            "id": 2,
+            "lat": -6.9314204107843,
+            "lng": 107.6386642983,
+            "bus": {
+                "id": 2,
+                "name": "Bus Prima Jasa",
+                "plate_number": "B 2222 CD",
+                "capacity": 30
+            },
+            "route": {
+                "id": 1,
+                "code": "PPP111",
+                "origin": "Depok",
+                "destination": "Bandung",
+                "stops": [
+                    "Banten",
+                    "Cirebon",
+                    "Bekasi"
+                ]
+            },
+            "schedule": {
+                "id": 1,
+                "departure_at": "2025-12-01 08:00:00",
+                "arrival_at": "2025-12-01 10:00:00",
+                "available_seats": 36,
+                "price": 30000
+            },
+            "created_at": "2025-11-14T16:14:31.000000Z"
+        }
+    ]
 }
 ```
 
 ### 3. Create Tracking
 
 ```http
-POST /api/tracking
+POST /api/trackings
 Content-Type: application/json
 
 {
-  "bus_id": 1,
-  "route_name": "Jakarta - Bandung",
-  "departure_time": "2024-11-13T08:00:00Z",
-  "estimated_arrival": "2024-11-13T10:30:00Z",
-  "total_distance": 180
+  "bus_id": 1 //sesuaikan dengan bus_id yang tersedia
 }
 ```
 
 **Response (201 Created):**
 ```json
 {
-  "success": true,
-  "message": "Tracking created successfully",
-  "data": {
     "id": 2,
-    "bus_id": 1,
-    "route_name": "Jakarta - Bandung",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T10:30:00Z",
-    "current_location": "-6.1257,106.8650",
-    "status": "scheduled",
-    "distance_traveled": 0,
-    "total_distance": 180,
-    "created_at": "2024-11-13T08:00:00Z",
-    "updated_at": "2024-11-13T08:00:00Z"
-  }
+    "lat": -6.9540970670504,
+    "lng": 107.63452712561,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T16:14:31.000000Z"
 }
 ```
 
 ### 4. Update Tracking (Real-time Location)
 
 ```http
-PUT /api/tracking/{id}
+POST /api/tracking/{id}
 Content-Type: application/json
 
 {
-  "current_location": "-6.9271,107.6428",
-  "distance_traveled": 45.5,
-  "status": "on_route"
+  "bus_id": 2 //sesuaikan dengan bus_id yang sudah pernah di-track
 }
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "success": true,
-  "message": "Tracking updated successfully",
-  "data": {
-    "id": 1,
-    "bus_id": 1,
-    "route_name": "Jakarta - Bandung",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T10:30:00Z",
-    "current_location": "-6.9271,107.6428",
-    "status": "on_route",
-    "distance_traveled": 45.5,
-    "total_distance": 180,
-    "created_at": "2024-11-13T08:00:00Z",
-    "updated_at": "2024-11-13T09:15:00Z"
-  }
+    "id": 2,
+    "lat": -6.9615570335663,
+    "lng": 107.61720872705,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T16:14:31.000000Z"
 }
 ```
 
 ### 5. Delete Tracking
 
 ```http
-DELETE /api/tracking/{id}
+DELETE /api/trackings/{id}
 ```
 
 **Response (200 OK):**
 ```json
 {
   "success": true,
-  "message": "Tracking deleted successfully"
+  "message": "Data Tracking berhasil dihapus!"
 }
 ```
 
