@@ -21,6 +21,7 @@ Dokumentasi lengkap API untuk sistem BusTrack Hub microservices.
 | **Ticket Service** | `http://localhost:8003` | 8003 |
 | **Payment Service** | `http://localhost:8002` | 8002 |
 | **Tracking Service** | `http://localhost:8004` | 8004 |
+| **Dashboard (Frontend)** | `http://localhost:8000` | 8000 |
 
 ---
 
