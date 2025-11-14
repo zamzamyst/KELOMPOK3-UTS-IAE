@@ -8,50 +8,51 @@ Tracking Service menangani pelacakan lokasi bus real-time, riwayat perjalanan, d
 
 ## Base URL
 
-- **Gateway**: `http://localhost:4000/tracking`
+- **Gateway**: `http://localhost:4000/api/tracking-service`
 - **Direct**: `http://localhost:8004`
 
 ## Endpoints
 
-### GET /api/tracking
-Ambil daftar semua data pelacakan dengan pagination dan filtering.
-
-**Query Parameters:**
-- `limit` (integer, optional): Jumlah item per halaman (default: 10)
-- `offset` (integer, optional): Offset untuk pagination (default: 0)
-- `bus_id` (integer, optional): Filter berdasarkan ID bus
-- `status` (string, optional): Filter berdasarkan status (on_route, arrived, delayed, cancelled)
+### GET /api/trackings
+Ambil daftar semua data pelacakan.
 
 **Example Request:**
 ```bash
-curl -X GET "http://localhost:4000/tracking/api/tracking?status=on_route&limit=5" \
+curl -X GET "http://localhost:4000/api/tracking-services/api/trackings" \
   -H "Content-Type: application/json"
 ```
 
 **Success Response (200):**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "bus_id": 1,
-      "current_latitude": -6.2088,
-      "current_longitude": 106.8456,
-      "status": "on_route",
-      "departure_time": "2024-11-13T08:00:00Z",
-      "estimated_arrival": "2024-11-13T12:30:00Z",
-      "distance_traveled": 45.5,
-      "total_distance": 120,
-      "updated_at": "2024-11-13T10:15:00Z"
-    }
-  ],
-  "pagination": {
-    "total": 15,
-    "limit": 5,
-    "offset": 0,
-    "pages": 3
-  }
+    "id": 2,
+    "lat": -6.9615570335663,
+    "lng": 107.61720872705,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T16:14:31.000000Z"
 }
 ```
 
@@ -63,97 +64,104 @@ Ambil detail pelacakan berdasarkan ID.
 **Path Parameters:**
 - `id` (integer, required): ID tracking
 
+**Query Parameters:**
+- `bus_id` (integer): Filter berdasarkan ID bus yang sudah pernah di-track
+
 **Example Request:**
 ```bash
-curl -X GET "http://localhost:4000/tracking/api/tracking/1" \
+curl -X GET "http://localhost:4000/api/tracking-service/api/trackings/1" \
   -H "Content-Type: application/json"
 ```
 
 **Success Response (200):**
 ```json
 {
-  "success": true,
-  "data": {
     "id": 1,
-    "bus_id": 1,
-    "current_latitude": -6.2088,
-    "current_longitude": 106.8456,
-    "status": "on_route",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T12:30:00Z",
-    "distance_traveled": 45.5,
-    "total_distance": 120,
-    "stops_completed": 3,
-    "total_stops": 8,
-    "driver_name": "Budi Santoso",
-    "vehicle_speed": 75,
-    "updated_at": "2024-11-13T10:15:00Z"
-  }
+    "lat": -6.9615570335663,
+    "lng": 107.61720872705,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T16:14:31.000000Z"
 }
 ```
 
 ---
 
-### POST /api/tracking
+### POST /api/trackings
 Buat data pelacakan baru.
 
 **Request Body:**
 ```json
 {
   "bus_id": 1,
-  "current_latitude": -6.2088,
-  "current_longitude": 106.8456,
-  "status": "on_route",
-  "departure_time": "2024-11-13T08:00:00Z",
-  "estimated_arrival": "2024-11-13T12:30:00Z",
-  "total_distance": 120
 }
 ```
 
 **Required Fields:**
-- `bus_id` (integer): ID bus
-- `current_latitude` (decimal): Latitude lokasi saat ini
-- `current_longitude` (decimal): Longitude lokasi saat ini
-- `status` (string): Status perjalanan
-- `departure_time` (datetime): Waktu keberangkatan
-- `estimated_arrival` (datetime): Perkiraan waktu tiba
-- `total_distance` (decimal): Total jarak perjalanan
+- `bus_id` (integer): ID bus yang tersedia/sudah pernah dibuat
 
 **Example Request:**
 ```bash
-curl -X POST "http://localhost:4000/tracking/api/tracking" \
+curl -X POST "http://localhost:4000/api/tracking-service/api/tracking" \
   -H "Content-Type: application/json" \
   -d '{
-    "bus_id": 1,
-    "current_latitude": -6.2088,
-    "current_longitude": 106.8456,
-    "status": "on_route",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T12:30:00Z",
-    "total_distance": 120
+    "bus_id": 2
   }'
 ```
 
 **Success Response (201):**
 ```json
 {
-  "success": true,
-  "message": "Tracking data created successfully",
-  "data": {
     "id": 2,
-    "bus_id": 1,
-    "current_latitude": -6.2088,
-    "current_longitude": 106.8456,
-    "status": "on_route",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T12:30:00Z",
-    "distance_traveled": 0,
-    "total_distance": 120,
-    "stops_completed": 0,
-    "total_stops": 0,
-    "created_at": "2024-11-13T11:00:00Z",
-    "updated_at": "2024-11-13T11:00:00Z"
-  }
+    "lat": -6.9615570335663,
+    "lng": 107.61720872705,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T16:14:31.000000Z"
 }
 ```
 
@@ -161,18 +169,14 @@ curl -X POST "http://localhost:4000/tracking/api/tracking" \
 ```json
 {
   "success": false,
-  "message": "Validation failed",
-  "errors": {
-    "current_latitude": ["Latitude must be between -90 and 90"],
-    "current_longitude": ["Longitude must be between -180 and 180"]
-  }
+  "message": "Bus tidak tersedia!"
 }
 ```
 
 ---
 
-### PUT /api/tracking/{id}
-Update lokasi dan status pelacakan.
+### POST /api/trackings/{id}
+Update lokasi pelacakan.
 
 **Path Parameters:**
 - `id` (integer, required): ID tracking
@@ -180,53 +184,59 @@ Update lokasi dan status pelacakan.
 **Request Body:**
 ```json
 {
-  "current_latitude": -6.2100,
-  "current_longitude": 106.8500,
-  "status": "on_route",
-  "distance_traveled": 50,
-  "vehicle_speed": 80
+  "bus_id": 2,
 }
 ```
 
+**Required Fields:**
+- `bus_id` (integer): ID bus yang tersedia/sudah pernah di-track
+
 **Example Request:**
 ```bash
-curl -X PUT "http://localhost:4000/tracking/api/tracking/1" \
+curl -X POST "http://localhost:4000/api/tracking-service/api/tracking" \
   -H "Content-Type: application/json" \
   -d '{
-    "current_latitude": -6.2100,
-    "current_longitude": 106.8500,
-    "status": "on_route",
-    "distance_traveled": 50,
-    "vehicle_speed": 80
+    "bus_id": 2
   }'
 ```
 
 **Success Response (200):**
 ```json
 {
-  "success": true,
-  "message": "Tracking data updated successfully",
-  "data": {
-    "id": 1,
-    "bus_id": 1,
-    "current_latitude": -6.2100,
-    "current_longitude": 106.8500,
-    "status": "on_route",
-    "departure_time": "2024-11-13T08:00:00Z",
-    "estimated_arrival": "2024-11-13T12:30:00Z",
-    "distance_traveled": 50,
-    "total_distance": 120,
-    "vehicle_speed": 80,
-    "stops_completed": 3,
-    "total_stops": 8,
-    "updated_at": "2024-11-13T10:45:00Z"
-  }
+    "id": 3,
+    "lat": -6.8965103451805,
+    "lng": 107.61971682149,
+    "bus": {
+        "id": 2,
+        "name": "Bus Prima Jasa",
+        "plate_number": "B 2222 CD",
+        "capacity": 30
+    },
+    "route": {
+        "id": 1,
+        "code": "PPP111",
+        "origin": "Depok",
+        "destination": "Bandung",
+        "stops": [
+            "Banten",
+            "Cirebon",
+            "Bekasi"
+        ]
+    },
+    "schedule": {
+        "id": 1,
+        "departure_at": "2025-12-01 08:00:00",
+        "arrival_at": "2025-12-01 10:00:00",
+        "available_seats": 36,
+        "price": 30000
+    },
+    "created_at": "2025-11-14T17:40:58.000000Z"
 }
 ```
 
 ---
 
-### DELETE /api/tracking/{id}
+### DELETE /api/trackings/{id}
 Hapus data pelacakan.
 
 **Path Parameters:**
@@ -234,7 +244,7 @@ Hapus data pelacakan.
 
 **Example Request:**
 ```bash
-curl -X DELETE "http://localhost:4000/tracking/api/tracking/1" \
+curl -X DELETE "http://localhost:4000/api/tracking-service/api/trackings/1" \
   -H "Content-Type: application/json"
 ```
 
@@ -242,29 +252,20 @@ curl -X DELETE "http://localhost:4000/tracking/api/tracking/1" \
 ```json
 {
   "success": true,
-  "message": "Tracking data deleted successfully"
+  "message": "Data Tracking berhasil dihapus!"
 }
 ```
-
----
-
-## Tracking Status
-
-- **on_route**: Bus sedang perjalanan
-- **arrived**: Bus telah tiba di tujuan
-- **delayed**: Bus terlambat
-- **cancelled**: Perjalanan dibatalkan
 
 ---
 
 ## Location Data
 
 Sistem tracking menggunakan koordinat GPS (Latitude, Longitude) dalam format desimal:
-- **Latitude**: -90 hingga +90 (positif = utara, negatif = selatan)
-- **Longitude**: -180 hingga +180 (positif = timur, negatif = barat)
+- **Latitude (Lat)**: -90 hingga +90 (positif = utara, negatif = selatan)
+- **Longitude (Lng)**: -180 hingga +180 (positif = timur, negatif = barat)
 
 **Contoh koordinat Jakarta:** -6.2088, 106.8456
 
 ---
 
-**Last Updated:** November 2024
+**Last Updated:** November 2025
