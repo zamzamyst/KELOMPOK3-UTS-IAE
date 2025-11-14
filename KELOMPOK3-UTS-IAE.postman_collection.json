@@ -1162,7 +1162,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "\n// jika bus_id tidak tersedia/belum dibuat, maka data akan null.\n{\n  \"bus_id\": 2 //sesuaikan dengan bus_id yang tersedia\n}\n",
+							"raw": "\n// jika bus_id tidak tersedia/belum dibuat, maka data akan null.\n// jika bus_id sudah pernah di-track, maka hanya akan memperbarui koordinat lokasi saja\n{\n  \"bus_id\": 2 //sesuaikan dengan bus_id yang tersedia/sudah pernah di-track\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
