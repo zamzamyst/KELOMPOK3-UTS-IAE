@@ -2,16 +2,13 @@
 
 Dokumentasi lengkap API untuk sistem BusTrack Hub microservices.
 
-## 📋 Daftar Isi
+## 🔗 Quick Links
 
-- [Base URLs](#base-urls)
-- [Authentication](#authentication)
-- [Bus Service API](#bus-service-api)
-- [Ticket Service API](#ticket-service-api)
-- [Payment Service API](#payment-service-api)
-- [Tracking Service API](#tracking-service-api)
-- [Error Handling](#error-handling)
-- [Response Format](#response-format)
+- [Main README](../../README.md)
+- [Bus Service Details](bus-service.md)
+- [Ticket Service Details](ticket-service.md)
+- [Payment Service Details](payment-service.md)
+- [Tracking Service Details](tracking-service.md)
 
 ---
 
@@ -85,16 +82,6 @@ Semua API responses mengikuti standar format berikut:
   "errors": {}
 }
 ```
-
----
-
-## 🔗 Quick Links
-
-- [Main README](../../README.md)
-- [Bus Service Details](bus-service.md)
-- [Ticket Service Details](ticket-service.md)
-- [Payment Service Details](payment-service.md)
-- [Tracking Service Details](tracking-service.md)
 
 ---
 
