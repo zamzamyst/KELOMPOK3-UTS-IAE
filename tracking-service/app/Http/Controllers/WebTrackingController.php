@@ -11,7 +11,7 @@ class WebTrackingController extends Controller
     public function index(Request $request)
     {
         $trackings = Tracking::latest()->paginate(20);
-        return view('trackings.index', compact('trackings'));
+        return view('trackings.show', compact('trackings'));
     }
 
     public function create()
@@ -41,7 +41,7 @@ class WebTrackingController extends Controller
         $response = Http::post($endpoint, $payload);
 
         if ($response->successful()) {
-            return redirect()->route('trackings.index')->with('success', 'Tracking created successfully!');
+            return redirect()->route('trackings.show')->with('success', 'Tracking created successfully!');
         }
 
         return back()->withErrors([
@@ -51,18 +51,19 @@ class WebTrackingController extends Controller
 
     public function show($id)
     {
-        return view('trackings.show', ['id' => $id]);
+        return view('trackings.show', ['id' => $id, 'trackings' => Tracking::latest()->paginate(20)]);
     }
+
 
     public function destroy($id)
     {
         $apiGateway = rtrim(env('API_GATEWAY_URL', 'http://127.0.0.1:4000'), '/');
-        $endpoint = "{$apiGateway}/api/tracking-service/trackings/{$id}";
+        $endpoint = "{$apiGateway}/api/tracking-service/api/trackings/{$id}";
 
-        $response = Http::delete($endpoint);
+        $response = Http::timeout(10)->delete($endpoint);
 
         if ($response->successful()) {
-            return redirect()->route('trackings.index')->with('success', 'Tracking deleted successfully!');
+            return redirect()->route('trackings.show')->with('success', 'Tracking deleted successfully!');
         }
 
         return back()->withErrors([
