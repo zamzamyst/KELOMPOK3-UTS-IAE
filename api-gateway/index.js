@@ -2,8 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const { verifyToken, login, register } = require("./auth");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // ==========================
@@ -53,7 +55,7 @@ app.use("/api/bus-service", createProxyMiddleware({
   target: "http://localhost:8001",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/api/bus-service": '' },
+  pathRewrite: { "^/api/bus-service": '/api' },
   onProxyReq(proxyReq, req, res) {
     console.log(`➡️ Forwarding ${req.method} ${req.originalUrl} → bus-service`);
   },
@@ -68,7 +70,7 @@ app.use("/bus-service", createProxyMiddleware({
   target: "http://localhost:8001",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/bus-service": "" },
+  pathRewrite: { "^/bus-service": "/api" },
   onProxyReq(proxyReq, req, res) { console.log(`➡️ Forwarding UI ${req.method} ${req.originalUrl} → bus-service`); },
   onProxyRes(proxyRes, req, res) {
     if (proxyRes.headers && proxyRes.headers.location) {
@@ -93,7 +95,7 @@ app.use("/api/ticket-service", createProxyMiddleware({
   target: "http://localhost:8003",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/api/ticket-service": '' },
+  pathRewrite: { "^/api/ticket-service": '/api' },
   onProxyReq(proxyReq, req, res) {
     console.log(`➡️ Forwarding ${req.method} ${req.originalUrl} → ticket-service`);
   },
@@ -108,7 +110,7 @@ app.use("/ticket-service", createProxyMiddleware({
   target: "http://localhost:8003",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/ticket-service": "" },
+  pathRewrite: { "^/ticket-service": "/api" },
   onProxyReq(proxyReq, req, res) { console.log(`➡️ Forwarding UI ${req.method} ${req.originalUrl} → ticket-service`); },
   onProxyRes(proxyRes, req, res) {
     if (proxyRes.headers && proxyRes.headers.location) {
@@ -130,7 +132,7 @@ app.use("/api/payment-service", createProxyMiddleware({
   target: "http://localhost:8002",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/api/payment-service": '' },
+  pathRewrite: { "^/api/payment-service": '/api' },
   onProxyReq(proxyReq, req, res) {
     console.log(`➡️ Forwarding ${req.method} ${req.originalUrl} → payment-service`);
   },
@@ -145,7 +147,7 @@ app.use("/payment-service", createProxyMiddleware({
   target: "http://localhost:8002",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/payment-service": "" },
+  pathRewrite: { "^/payment-service": "/api" },
   onProxyReq(proxyReq, req, res) { console.log(`➡️ Forwarding UI ${req.method} ${req.originalUrl} → payment-service`); },
   onProxyRes(proxyRes, req, res) {
     if (proxyRes.headers && proxyRes.headers.location) {
@@ -167,7 +169,7 @@ app.use("/api/tracking-service", createProxyMiddleware({
   target: "http://localhost:8004",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/api/tracking-service": '' },
+  pathRewrite: { "^/api/tracking-service": '/api' },
   onProxyReq(proxyReq, req, res) {
     console.log(`➡️ Forwarding ${req.method} ${req.originalUrl} → tracking-service`);
   },
@@ -182,7 +184,7 @@ app.use("/tracking-service", createProxyMiddleware({
   target: "http://localhost:8004",
   changeOrigin: true,
   logLevel: "debug",
-  pathRewrite: { "^/tracking-service": "" },
+  pathRewrite: { "^/tracking-service": "/api" },
   onProxyReq(proxyReq, req, res) { console.log(`➡️ Forwarding UI ${req.method} ${req.originalUrl} → tracking-service`); },
   onProxyRes(proxyRes, req, res) {
     if (proxyRes.headers && proxyRes.headers.location) {
